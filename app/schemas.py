@@ -1,17 +1,17 @@
 from __future__ import annotations
 
-from typing import Any, Literal
+from typing import Any
 
 from pydantic import BaseModel, Field
 
 
 class ChatMessage(BaseModel):
-    role: Literal["system", "user", "assistant", "tool"] | str
+    role: str
     content: Any
 
 
 class ChatCompletionsRequest(BaseModel):
-    model: str = Field(default="openclaw/default")
+    model: str = Field(default="openclaw")
     messages: list[ChatMessage]
     stream: bool = False
     temperature: float | None = None

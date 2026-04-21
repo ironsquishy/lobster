@@ -1,142 +1,40 @@
-# 🦞 Lobster — Adapter for Shrimpy → OpenClaw
+# Lobster
 
-Lobster is a **secure adapter layer** between:
+Lobster is the OpenAI-compatible adapter between Open WebUI and OpenClaw.
 
-* 🦐 **Shrimpy** (Nginx reverse proxy, public)
-* 🧠 **Goliath** (OpenClaw Gateway, private)
-* ⚡ **Orin** (optional edge compute)
+## Features
 
----
+- `/v1/models`
+- `/v1/chat/completions`
+- streaming passthrough
+- verbose logging
+- SQLite per-user memory
+- safe memory injection
+- rule-based durable memory extraction
 
-## 🧠 Architecture
+## Environment
 
-```
-Internet
-   |
-   v
-🦐 Shrimpy (Nginx :443)
-   |
-   v
-Public chatbot app (:3000)
-   |
-   v
-🦞 Lobster (:4000, localhost only)
-   |
-   v
-🧠 OpenClaw (127.0.0.1:18789)
-```
+Copy `.env.example` to `.env` and fill in values.
 
----
-
-## 🔥 Core Principles
-
-* ❌ OpenClaw is NEVER exposed publicly
-* ✅ Lobster is the ONLY service allowed to talk to OpenClaw
-* 🔐 Shrimpy authenticates with Lobster via shared secret
-* 🛡 Lobster enforces public safety rules
-
----
-
-## 🚀 Features
-
-* Public/private mode separation
-* Request sanitization
-* Model allowlist
-* Rate limiting (extensible)
-* Streaming support (SSE-ready)
-* Ready for Orin routing
-
----
-
-## ⚙️ Setup
-
-### 1. Clone repo
+## Run locally
 
 ```bash
-git clone https://github.com/<your-username>/lobster.git
-cd lobster
-```
+docker build -t lobster .
+docker run --rm -p 4000:4000 --env-file .env -v $(pwd)/data:/app/data lobster
 
 ---
 
-### 2. Setup environment
+# Docker compose note
 
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
+In your Shrimpy stack, make sure Lobster has a persistent volume:
 
----
-
-### 3. Configure environment
-
-```bash
-cp .env.example .env
-nano .env
-```
-
----
-
-### 4. Run locally
-
-```bash
-./run.sh
-```
-
----
-
-## 🔐 Environment Variables
-
-```env
-OPENCLAW_URL=http://127.0.0.1:18789
-OPENCLAW_TOKEN=your-secret-token
-PUBLIC_SHARED_SECRET=your-shrimpy-secret
-```
-
----
-
-## 🧪 Test
-
-```bash
-curl http://127.0.0.1:4000/healthz
-```
-
----
-
-## 🛡 Security Model
-
-### Public Mode
-
-* ❌ No shell
-* ❌ No filesystem writes
-* ❌ No browser automation
-* ✅ Restricted models only
-
-### Private Mode
-
-* Full capabilities (via Tailscale/admin)
-
----
-
-## 🔀 Future Extensions
-
-* Route requests to ⚡ Orin
-* Add Redis rate limiting
-* Add user authentication
-* Add logging + analytics
-* Multi-model routing
-
----
-
-## 💡 Philosophy
-
-> Shrimpy handles traffic
-> Lobster handles trust
-> Goliath handles intelligence
-
----
-
-## 📄 License
-
-MIT
+```yaml
+lobster:
+  build:
+    context: ./lobster
+  env_file:
+    - .env
+  expose:
+    - "4000"
+  volumes:
+    - ./lobster/data:/app/data
