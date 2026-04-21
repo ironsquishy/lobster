@@ -1,0 +1,41 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments (highly recommended)
+venv/
+env/
+.env/
+.venv/
+ENV/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+*.egg
+lib/
+lib64/
+
+# Unit test / coverage reports
+.tox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+htmlcov/
+.pytest_cache/
+
+# Local Environment Variables (Secret Keys)
+.env
+.venv
+env.bak/
+venv.bak/
+
+# IDE Specific (optional, but common)
+.vscode/
+.idea/
+*.swp
+*.swo
+
