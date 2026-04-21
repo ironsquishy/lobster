@@ -104,9 +104,14 @@ async def post_chat_completions(
     payload.setdefault("max_tokens", 128)
     payload.setdefault("temperature", 0)
 
-    user_id = payload.get("user")
+    user_id = (
+    	request.headers.get("X-OpenWebUI-User-Id")
+    	or payload.get("user")
+	)
+
     messages = payload.get("messages", [])
 
+	logger.info("[%s] resolved user_id=%s", req_id, user_id)
     if user_id:
         query_text = _extract_last_user_text(messages)
         memories = search_memories(user_id=user_id, query=query_text, limit=6)
